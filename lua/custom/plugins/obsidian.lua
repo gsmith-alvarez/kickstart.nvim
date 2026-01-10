@@ -11,7 +11,16 @@ return {
         opts.ensure_installed = {}
       end
       -- Append your Obsidian-specific parsers to the existing list
-      vim.list_extend(opts.ensure_installed, { 'markdown', 'markdown_inline', 'latex' })
+      vim.list_extend(opts.ensure_installed, { 'markdown', 'markdown_inline', 'latex', 'html' })
+    end,
+    config = function(_, opts)
+      require('nvim-treesitter.config').setup(opts)
+      vim.api.nvim_create_autocmd({ 'FileType' }, {
+        pattern = 'markdown',
+        callback = function()
+          vim.treesitter.start()
+        end,
+      })
     end,
   },
   { -- 2. Obsidian: The "Brain"
@@ -25,7 +34,7 @@ return {
         },
       },
       -- This ensures links look like [[this]] instead of [this](this.md)
-      ui = { enable = true },
+      ui = { enable = false },
     },
   },
 
@@ -53,11 +62,16 @@ return {
     opts = {
       latex = {
         enabled = true,
-        converter = 'latex2text',
+        render_modes = false,
+        converter = { 'utftex', 'latex2text' },
+        highlight = 'RenderMarkdownMath',
+        style = 'expr',
+        position = 'center',
+        top_pad = 0,
+        bottom_pad = 0,
       },
       -- Hides the $ signs and marks when you aren't editing them
       anti_conceal = { enabled = true },
-      render_modes = { 'n', 'c', 'i' },
     },
 
     -- 5. Markdown Linting: The "Auditor" (NEW)
