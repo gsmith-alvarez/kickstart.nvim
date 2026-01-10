@@ -59,5 +59,40 @@ return {
       anti_conceal = { enabled = true },
       render_modes = { 'n', 'c', 'i' },
     },
+
+    -- 5. Markdown Linting: The "Auditor" (NEW)
+    {
+      'mfussenegger/nvim-lint',
+      event = { 'BufReadPre', 'BufNewFile' },
+      config = function()
+        local lint = require 'lint'
+        -- Setup the linter
+        lint.linters_by_ft = lint.linters_by_ft or {}
+        lint.linters_by_ft['markdown'] = { 'markdownlint' }
+
+        -- Configure markdownlint to find your .markdownlint.json
+        local markdownlint = lint.linters.markdownlint
+        markdownlint.args = {
+          '--config',
+          function()
+            -- Searches upward for your config in the Obsidian Vault
+            local config = vim.fs.find({ '.markdownlint.json' }, { upward = true, path = vim.fn.expand '%:p:h' })[1]
+            return config or '.markdownlint.json'
+          end,
+          '--',
+        }
+
+        -- Create autocommand for markdown linting
+        local lint_augroup = vim.api.nvim_create_augroup('markdown_lint', { clear = true })
+        vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'InsertLeave' }, {
+          group = lint_augroup,
+          callback = function()
+            if vim.bo.filetype == 'markdown' and vim.bo.modifiable then
+              lint.try_lint()
+            end
+          end,
+        })
+      end,
+    },
   },
 }
