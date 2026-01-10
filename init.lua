@@ -172,6 +172,8 @@ vim.opt.linebreak = true -- Wrap at words, not characters
 vim.opt.breakindent = true -- Wrapped lines retain indentation
 vim.opt.showbreak = '↪ ' -- Visual marker for wrapped lines
 
+-- [[Concealing Latex/Mathjax Rendering]]
+vim.opt.conceallevel = 2
 --- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
