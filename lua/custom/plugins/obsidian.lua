@@ -30,7 +30,7 @@ return {
       workspaces = {
         {
           name = 'Obsidian',
-          path = '/home/fall-of-baghdad/Documents/Obsidian/',
+          path = '~/Documents/Obsidian/',
         },
       },
       -- This ensures links look like [[this]] instead of [this](this.md)
